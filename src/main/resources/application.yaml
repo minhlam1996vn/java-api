@@ -16,3 +16,6 @@ spring:
 logging:
   level:
     org.hibernate.orm.connections.pooling: WARN
+
+jwt:
+  signerKey: 30cE2KCuTKlzWu5bGPGb3AdfXECdHzAoe0SMVgyAFK55j
