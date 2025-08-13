@@ -12,11 +12,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreateRequest {
-    @NotBlank(message = "Name is required")
-    @Size(min = 100, message = "Name must not exceed 100 characters")
+    @NotBlank
     String name;
 
-    @NotBlank(message = "Email is required")
+    @NotBlank(message = "Email is required.")
     @Email(message = "Email is not valid")
     String email;
 
