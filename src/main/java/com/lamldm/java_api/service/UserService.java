@@ -3,6 +3,7 @@ package com.lamldm.java_api.service;
 import com.lamldm.java_api.dto.request.user.UserCreateRequest;
 import com.lamldm.java_api.dto.response.user.UserCreateResponse;
 import com.lamldm.java_api.entity.User;
+import com.lamldm.java_api.mapper.UserMapper;
 import com.lamldm.java_api.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -16,19 +17,12 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserService {
     UserRepository userRepository;
+    UserMapper userMapper;
 
-    public UserCreateResponse createUser(UserCreateRequest userCreateRequest) {
-        User user = new User();
-        user.setEmail(userCreateRequest.getEmail());
-        user.setName(userCreateRequest.getName());
-        user.setPassword(userCreateRequest.getPassword());
-
+    public UserCreateResponse createUser(UserCreateRequest request) {
+        User user = userMapper.toUser(request);
         User createdUser = userRepository.save(user);
 
-        return UserCreateResponse.builder()
-                .id(createdUser.getId())
-                .email(createdUser.getEmail())
-                .name(createdUser.getName())
-                .build();
+        return userMapper.toUserCreateResponse(createdUser);
     }
 }

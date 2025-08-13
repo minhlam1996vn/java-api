@@ -33,6 +33,7 @@ public class UserController {
         UserCreateResponse user = userService.createUser(request);
 
         return ApiResponse.<UserCreateResponse>builder()
+                .message("Created User")
                 .result(user)
                 .build();
     }

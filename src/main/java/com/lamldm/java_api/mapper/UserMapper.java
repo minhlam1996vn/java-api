@@ -8,8 +8,10 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
+    // Map request -> entity
     User toUser(UserCreateRequest userMapper);
 
+    // Map entity -> response
     UserCreateResponse toUserCreateResponse(User user);
 
     UserDetailResponse toUserDetailResponse(User user);
