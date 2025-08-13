@@ -22,7 +22,7 @@ public class SecurityConfig {
     private String signerKey;
 
     private final String[] PUBLIC_ENDPOINTS = {
-            "/public/**"
+            "/users/**"
     };
 
     private final String[] PUBLIC_GET_ENDPOINTS = {
