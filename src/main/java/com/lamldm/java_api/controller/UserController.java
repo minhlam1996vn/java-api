@@ -2,6 +2,8 @@ package com.lamldm.java_api.controller;
 
 import com.lamldm.java_api.dto.request.user.UserCreateRequest;
 import com.lamldm.java_api.dto.response.ApiResponse;
+import com.lamldm.java_api.dto.response.user.UserCreateResponse;
+import com.lamldm.java_api.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,8 @@ import java.util.Map;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class UserController {
+    UserService userService;
+
     @GetMapping
     ApiResponse<String> index() {
         return ApiResponse.<String>builder()
@@ -25,9 +29,11 @@ public class UserController {
     }
 
     @PostMapping
-    ApiResponse<String> store(@RequestBody @Valid UserCreateRequest request) {
-        return ApiResponse.<String>builder()
-                .result("validate ok")
+    ApiResponse<UserCreateResponse> store(@RequestBody @Valid UserCreateRequest request) {
+        UserCreateResponse user = userService.createUser(request);
+
+        return ApiResponse.<UserCreateResponse>builder()
+                .result(user)
                 .build();
     }
 

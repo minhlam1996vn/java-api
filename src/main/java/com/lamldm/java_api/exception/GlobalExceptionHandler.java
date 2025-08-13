@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<ApiResponse<Map<String, Object>>> handleException(Exception exception, HttpServletRequest request) {
-        log.error(exception.getMessage(), exception);
+//        log.error(exception.getMessage(), exception);
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("method", request.getMethod());
@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, List<String>>>> handleValidationException(MethodArgumentNotValidException exception) {
-        log.error(exception.getMessage(), exception);
+//        log.error(exception.getMessage(), exception);
 
         Map<String, List<String>> errors = exception.getBindingResult()
                 .getFieldErrors()
