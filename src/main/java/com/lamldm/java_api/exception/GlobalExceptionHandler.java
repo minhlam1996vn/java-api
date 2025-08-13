@@ -6,8 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.*;
 
 @ControllerAdvice
 @Slf4j
@@ -17,10 +18,15 @@ public class GlobalExceptionHandler {
         log.error(exception.getMessage(), exception);
 
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("type", exception.getClass().getName());
-        body.put("error", exception.getMessage());
         body.put("method", request.getMethod());
         body.put("path", request.getRequestURI());
+        body.put("type", exception.getClass().getName());
+        body.put("error", exception.getMessage());
+
+        StringWriter stringWriter = new StringWriter();
+        exception.printStackTrace(new PrintWriter(stringWriter));
+        List<String> trace = Arrays.asList(stringWriter.toString().split("\n"));
+        body.put("trace", trace);
 
         return ResponseEntity.badRequest().body(body);
     }
