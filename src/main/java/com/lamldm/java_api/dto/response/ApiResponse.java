@@ -3,6 +3,7 @@ package com.lamldm.java_api.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 
 @Data // getter, setter, toString(), equals(), hashCode()
 @Builder // ApiResponse.<String>builder().code(200).message("OK").result("Hello").build();
@@ -13,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class ApiResponse<T> {
     @Builder.Default
     boolean status = true;
-    String message;
+    @Builder.Default
+    String message = HttpStatus.OK.getReasonPhrase();
     T result;
 }

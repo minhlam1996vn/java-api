@@ -39,7 +39,7 @@ public class UserController {
         UserCreateResponse user = userService.createUser(request);
 
         return ApiResponse.<UserCreateResponse>builder()
-                .message("Created User")
+                .message("Created")
                 .result(user)
                 .build();
     }
@@ -61,7 +61,7 @@ public class UserController {
         UserUpdateResponse user = userService.updateUser(userId, request);
 
         return ApiResponse.<UserUpdateResponse>builder()
-                .message("Updated User")
+                .message("Updated")
                 .result(user)
                 .build();
     }
@@ -71,7 +71,7 @@ public class UserController {
         userService.deleteUser(userId);
 
         return ApiResponse.<String>builder()
-                .result("Deleted User")
+                .result("Deleted")
                 .build();
     }
 }
