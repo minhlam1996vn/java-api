@@ -46,6 +46,32 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handler for application-specific exceptions (AppException).
+     * - Catches any AppException thrown by the application.
+     * - Returns the HTTP response code specified in the exception.
+     */
+    @ExceptionHandler(AppException.class)
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleAppException(
+            AppException exception,
+            HttpServletRequest request
+    ) {
+        Map<String, String> body = new LinkedHashMap<>();
+        body.put("method", request.getMethod());
+        body.put("path", request.getRequestURI());
+        body.put("message", exception.getMessage());
+
+        ApiResponse<Map<String, String>> apiResponse = ApiResponse.<Map<String, String>>builder()
+                .status(false)
+                .message(exception.getResponseStatus().getReasonPhrase())
+                .result(body)
+                .build();
+
+        return ResponseEntity
+                .status(exception.getResponseStatus())
+                .body(apiResponse);
+    }
+
+    /**
      * Handler for validation errors when using @Valid on @RequestBody.
      * - Catches MethodArgumentNotValidException thrown by Spring.
      * - Returns HTTP 422 (Unprocessable Entity) with detailed error messages.
@@ -66,7 +92,7 @@ public class GlobalExceptionHandler {
 
         ApiResponse<Map<String, List<String>>> apiResponse = ApiResponse.<Map<String, List<String>>>builder()
                 .status(false)
-                .message("The given data was invalid.")
+                .message(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase())
                 .result(errors)
                 .build();
 
