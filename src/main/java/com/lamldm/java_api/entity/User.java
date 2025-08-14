@@ -6,10 +6,12 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Table(name = "users")
+@SQLDelete(sql = "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLRestriction("deleted_at IS NULL")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,18 +28,20 @@ public class User {
     @Column(nullable = false, unique = true)
     String email;
 
-    LocalDateTime emailVerifiedAt;
+    @Column(name = "email_verified_at")
+    Instant emailVerifiedAt;
 
     @Column(nullable = false)
     String password;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    LocalDateTime createdAt;
+    Instant createdAt;
 
     @UpdateTimestamp
     @Column(nullable = false)
-    LocalDateTime updatedAt;
+    Instant updatedAt;
 
-    LocalDateTime deletedAt;
+    @Column(name = "deleted_at")
+    Instant deletedAt;
 }
