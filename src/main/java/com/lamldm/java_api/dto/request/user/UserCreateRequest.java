@@ -1,5 +1,6 @@
 package com.lamldm.java_api.dto.request.user;
 
+import com.lamldm.java_api.validatior.UniqueEmail;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -17,6 +18,7 @@ public class UserCreateRequest {
 
     @NotBlank(message = "Email is required.")
     @Email(message = "Email is not valid")
+    @UniqueEmail
     String email;
 
     @NotBlank(message = "Password is required")
