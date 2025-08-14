@@ -14,6 +14,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+    /**
+     * Entry point for handling unauthorized access attempts in Spring Security.
+     * - Triggered when an unauthenticated user tries to access a secured resource.
+     * - Returns HTTP 401 (Unauthorized) with a structured JSON response.
+     */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException {

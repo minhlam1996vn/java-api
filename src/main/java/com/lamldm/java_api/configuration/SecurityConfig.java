@@ -15,6 +15,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import javax.crypto.spec.SecretKeySpec;
 
 // https://docs.spring.io/spring-security/reference/servlet/architecture.html
+
+/**
+ * Spring Security configuration for the application.
+ * - Defines public and secured API endpoints.
+ * - Configures JWT-based authentication and authorization.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
