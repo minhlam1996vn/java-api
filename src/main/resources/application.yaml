@@ -18,4 +18,4 @@ logging:
     org.hibernate.orm.connections.pooling: WARN
 
 jwt:
-  signerKey: 30cE2KCuTKlzWu5bGPGb3AdfXECdHzAoe0SMVgyAFK55j
+  signerKey: a1aRp8kvzv6G96NITGW6Dimqf4bnzdETpKEvgtb831TgO6+rKI9WYiXVXsADXrUB
