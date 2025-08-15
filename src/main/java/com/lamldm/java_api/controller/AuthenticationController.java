@@ -4,6 +4,9 @@ import com.lamldm.java_api.dto.request.auth.LoginRequest;
 import com.lamldm.java_api.dto.request.auth.LogoutRequest;
 import com.lamldm.java_api.dto.request.auth.RefreshRequest;
 import com.lamldm.java_api.dto.response.ApiResponse;
+import com.lamldm.java_api.dto.response.auth.LoginResponse;
+import com.lamldm.java_api.dto.response.auth.RefreshResponse;
+import com.lamldm.java_api.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,24 +23,31 @@ import org.springframework.web.bind.annotation.RestController;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class AuthenticationController {
+    AuthenticationService authenticationService;
+
     @PostMapping("/login")
-    ApiResponse<?> login(@RequestBody @Valid LoginRequest request) {
-        return ApiResponse.builder()
-                .result(request)
+    ApiResponse<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
+        LoginResponse loginResponse = authenticationService.login(request);
+
+        return ApiResponse.<LoginResponse>builder()
+                .result(loginResponse)
                 .build();
     }
 
     @PostMapping("/refresh")
-    ApiResponse<?> refresh(@RequestBody @Valid RefreshRequest request) {
-        return ApiResponse.builder()
-                .result(request)
+    ApiResponse<RefreshResponse> refresh(@RequestBody @Valid RefreshRequest request) {
+        RefreshResponse refreshResponse = authenticationService.refresh(request);
+
+        return ApiResponse.<RefreshResponse>builder()
+                .result(refreshResponse)
                 .build();
     }
 
     @PostMapping("/logout")
-    ApiResponse<?> logout(@RequestBody @Valid LogoutRequest request) {
-        return ApiResponse.builder()
-                .result(request)
+    ApiResponse<Void> logout(@RequestBody @Valid LogoutRequest request) {
+        authenticationService.logout(request);
+
+        return ApiResponse.<Void>builder()
                 .build();
     }
 }
