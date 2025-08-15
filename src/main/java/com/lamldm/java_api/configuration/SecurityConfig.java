@@ -7,6 +7,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -16,11 +18,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 // https://docs.spring.io/spring-security/reference/servlet/architecture.html
 
-/**
- * Spring Security configuration for the application.
- * - Defines public and secured API endpoints.
- * - Configures JWT-based authentication and authorization.
- */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -65,6 +62,16 @@ public class SecurityConfig {
         );
 
         return httpSecurity.build();
+    }
+
+    /**
+     * Creates and registers a PasswordEncoder in the Spring ApplicationContext.
+     * Can be injected into other classes via @Autowired or constructor injection.
+     * Use BCrypt (strength = 10) for secure one-way password hashing with salt.
+     */
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean

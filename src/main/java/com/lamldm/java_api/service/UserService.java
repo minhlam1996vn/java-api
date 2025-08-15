@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.List;
 public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
 
     private User getUserOrThrow(Integer userId) {
         return userRepository.findById(userId).orElseThrow(
@@ -40,6 +42,8 @@ public class UserService {
 
     public UserCreateResponse createUser(UserCreateRequest request) {
         User user = userMapper.toUserCreateRequest(request);
+        String encodePassword = passwordEncoder.encode(request.getPassword());
+        user.setPassword(encodePassword);
         User createdUser = userRepository.save(user);
 
         return userMapper.toUserCreateResponse(createdUser);
