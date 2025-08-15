@@ -25,6 +25,7 @@ public class SecurityConfig {
     private String signerKey;
 
     private final String[] PUBLIC_ENDPOINTS = {
+            "/auth/*",
     };
 
     private final String[] PUBLIC_GET_ENDPOINTS = {
