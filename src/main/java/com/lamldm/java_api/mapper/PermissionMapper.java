@@ -6,8 +6,6 @@ import com.lamldm.java_api.dto.response.permission.PermissionListResponse;
 import com.lamldm.java_api.entity.Permission;
 import org.mapstruct.Mapper;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring")
 public interface PermissionMapper {
     // Create mapping
@@ -16,5 +14,5 @@ public interface PermissionMapper {
     PermissionCreateResponse toCreatePermissionResponse(Permission permission);
 
     // List mapping
-    List<PermissionListResponse> toPermissionListResponse(List<Permission> permissions);
+    PermissionListResponse toPermissionListResponse(Permission permission);
 }
