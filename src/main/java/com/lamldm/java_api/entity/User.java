@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.*;
 
 import java.time.Instant;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -44,4 +45,7 @@ public class User {
 
     @Column(name = "deleted_at")
     Instant deletedAt;
+
+    @ManyToMany
+    Set<Role> roles;
 }
