@@ -1,5 +1,8 @@
 package com.lamldm.java_api.configuration;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,26 +23,28 @@ import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
 @EnableWebSecurity
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SecurityConfig {
-    @Value("${jwt.signerKey}")
-    private String signerKey;
+    @NonFinal
+    @Value("${jwt.accessTokenKey}")
+    String ACCESS_TOKEN_KEY;
 
-    private final String[] PUBLIC_ENDPOINTS = {
+    String[] PUBLIC_ENDPOINTS = {
             "/auth/*",
     };
 
-    private final String[] PUBLIC_GET_ENDPOINTS = {
+    String[] PUBLIC_GET_ENDPOINTS = {
             "/users/*"
     };
 
-    private final String[] PUBLIC_POST_ENDPOINTS = {
+    String[] PUBLIC_POST_ENDPOINTS = {
             "/users"
     };
 
-    private final String[] PUBLIC_PUT_ENDPOINTS = {
+    String[] PUBLIC_PUT_ENDPOINTS = {
     };
 
-    private final String[] PUBLIC_DELETE_ENDPOINTS = {
+    String[] PUBLIC_DELETE_ENDPOINTS = {
     };
 
     @Bean
@@ -77,7 +82,7 @@ public class SecurityConfig {
 
     @Bean
     JwtDecoder jwtDecoder() {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
+        SecretKeySpec secretKeySpec = new SecretKeySpec(ACCESS_TOKEN_KEY.getBytes(), "HS512");
 
         return NimbusJwtDecoder
                 .withSecretKey(secretKeySpec)

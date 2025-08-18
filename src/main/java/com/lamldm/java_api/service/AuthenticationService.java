@@ -31,8 +31,8 @@ public class AuthenticationService {
                 .filter(foundUser -> passwordEncoder.matches(request.getPassword(), foundUser.getPassword()))
                 .orElseThrow(() -> new AppException("Unauthorized", HttpStatus.UNAUTHORIZED));
 
-        String accessToken = jwtService.generateToken(user, 900, true);
-        String refreshToken = jwtService.generateToken(user, 604800, false);
+        String accessToken = jwtService.generateAccessToken(user, 900);
+        String refreshToken = jwtService.generateRefreshToken(user, 604800);
 
         return LoginResponse.builder()
                 .accessToken(accessToken)
