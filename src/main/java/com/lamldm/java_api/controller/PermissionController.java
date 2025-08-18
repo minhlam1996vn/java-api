@@ -1,0 +1,52 @@
+package com.lamldm.java_api.controller;
+
+import com.lamldm.java_api.dto.request.permission.PermissionCreateRequest;
+import com.lamldm.java_api.dto.response.ApiResponse;
+import com.lamldm.java_api.dto.response.permission.PermissionCreateResponse;
+import com.lamldm.java_api.dto.response.permission.PermissionListResponse;
+import com.lamldm.java_api.service.PermissionService;
+import jakarta.validation.Valid;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/permissions")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
+public class PermissionController {
+    PermissionService permissionService;
+
+    @GetMapping
+    ApiResponse<List<PermissionListResponse>> index() {
+        List<PermissionListResponse> permissions = permissionService.getAllPermissions();
+
+        return ApiResponse.<List<PermissionListResponse>>builder()
+                .result(permissions)
+                .build();
+    }
+
+    @PostMapping
+    ApiResponse<PermissionCreateResponse> store(@RequestBody @Valid PermissionCreateRequest request) {
+        PermissionCreateResponse permission = permissionService.createPermission(request);
+
+        return ApiResponse.<PermissionCreateResponse>builder()
+                .message("Created permission")
+                .result(permission)
+                .build();
+    }
+
+    @DeleteMapping("/{permissionName}")
+    ApiResponse<String> destroy(@PathVariable("permissionName") String permissionName) {
+        permissionService.deletePermission(permissionName);
+
+        return ApiResponse.<String>builder()
+                .result("Deleted permission")
+                .build();
+    }
+}
