@@ -7,6 +7,7 @@ import com.lamldm.java_api.dto.response.auth.LoginResponse;
 import com.lamldm.java_api.dto.response.auth.RefreshResponse;
 import com.lamldm.java_api.entity.User;
 import com.lamldm.java_api.exception.AppException;
+import com.lamldm.java_api.mapper.AuthMapper;
 import com.lamldm.java_api.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,8 @@ public class AuthenticationService {
 
     JwtService jwtService;
 
+    AuthMapper authMapper;
+
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .filter(foundUser -> passwordEncoder.matches(request.getPassword(), foundUser.getPassword()))
@@ -34,17 +37,14 @@ public class AuthenticationService {
         String accessToken = jwtService.generateAccessToken(user, 900);
         String refreshToken = jwtService.generateRefreshToken(user, 604800);
 
-        return LoginResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        return authMapper.toLoginResponse(accessToken, refreshToken);
     }
 
     public RefreshResponse refresh(RefreshRequest request) {
-        return RefreshResponse.builder()
-                .accessToken(request.getRefreshToken())
-                .refreshToken(request.getRefreshToken())
-                .build();
+        String accessToken = request.getRefreshToken();
+        String refreshToken = request.getRefreshToken();
+
+        return authMapper.toRefreshResponse(accessToken, refreshToken);
     }
 
     public void logout(LogoutRequest request) {
