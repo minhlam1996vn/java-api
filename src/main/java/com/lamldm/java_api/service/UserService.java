@@ -8,6 +8,7 @@ import com.lamldm.java_api.dto.response.user.UserListResponse;
 import com.lamldm.java_api.dto.response.user.UserUpdateResponse;
 import com.lamldm.java_api.entity.Role;
 import com.lamldm.java_api.entity.User;
+import com.lamldm.java_api.enums.RoleUser;
 import com.lamldm.java_api.exception.AppException;
 import com.lamldm.java_api.mapper.UserMapper;
 import com.lamldm.java_api.repository.RoleRepository;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +49,11 @@ public class UserService {
         User user = userMapper.toUserCreateRequest(request);
         String encodePassword = passwordEncoder.encode(request.getPassword());
         user.setPassword(encodePassword);
+
+        Set<String> defaultRoles = Set.of(RoleUser.USER.name());
+        List<Role> roles = roleRepository.findAllById(defaultRoles);
+        user.setRoles(new HashSet<>(roles));
+
         User createdUser = userRepository.save(user);
 
         return userMapper.toUserCreateResponse(createdUser);
