@@ -23,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -43,8 +44,9 @@ public class AuthenticationService {
                 .filter(foundUser -> passwordEncoder.matches(request.getPassword(), foundUser.getPassword()))
                 .orElseThrow(() -> new AppException("Unauthorized", HttpStatus.UNAUTHORIZED));
 
-        String accessToken = jwtService.generateAccessToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
+        String jwtId = UUID.randomUUID().toString();
+        String accessToken = jwtService.generateAccessToken(user, jwtId);
+        String refreshToken = jwtService.generateRefreshToken(user, jwtId);
 
         return authMapper.toAuthResponse(accessToken, refreshToken);
     }
@@ -68,8 +70,9 @@ public class AuthenticationService {
                 .findByEmail(email)
                 .orElseThrow(() -> new AppException("Unauthorized", HttpStatus.UNAUTHORIZED));
 
-        String accessToken = jwtService.generateAccessToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
+        String jwtId = UUID.randomUUID().toString();
+        String accessToken = jwtService.generateAccessToken(user, jwtId);
+        String refreshToken = jwtService.generateRefreshToken(user, jwtId);
 
         return authMapper.toAuthResponse(accessToken, refreshToken);
     }

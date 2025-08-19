@@ -20,7 +20,6 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +42,7 @@ public class JwtService {
     @Value("${jwt.refreshTokenExpirationTime}")
     Long REFRESH_TOKEN_EXPIRATION_TIME;
 
-    private String generateToken(User user, Long expirySeconds, String signerKey, String scope) {
+    private String generateToken(User user, String jwtId, Long expirySeconds, String signerKey, String scope) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet.Builder claimsBuilder = new JWTClaimsSet.Builder()
@@ -51,7 +50,7 @@ public class JwtService {
                 .issuer("ml-dev.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().plus(expirySeconds, ChronoUnit.SECONDS).toEpochMilli()))
-                .jwtID(UUID.randomUUID().toString());
+                .jwtID(jwtId);
 
         if (scope != null && !scope.isEmpty()) {
             claimsBuilder.claim("scope", scope);
@@ -86,12 +85,12 @@ public class JwtService {
         return signedJWT;
     }
 
-    public String generateAccessToken(User user) {
-        return generateToken(user, ACCESS_TOKEN_EXPIRATION_TIME, ACCESS_TOKEN_KEY, "ADMIN");
+    public String generateAccessToken(User user, String jwtId) {
+        return generateToken(user, jwtId, ACCESS_TOKEN_EXPIRATION_TIME, ACCESS_TOKEN_KEY, "ADMIN");
     }
 
-    public String generateRefreshToken(User user) {
-        return generateToken(user, REFRESH_TOKEN_EXPIRATION_TIME, REFRESH_TOKEN_KEY, null);
+    public String generateRefreshToken(User user, String jwtId) {
+        return generateToken(user, jwtId, REFRESH_TOKEN_EXPIRATION_TIME, REFRESH_TOKEN_KEY, null);
     }
 
     public SignedJWT verifyAccessToken(String token) throws JOSEException, ParseException {
