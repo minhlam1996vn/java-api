@@ -33,7 +33,7 @@ public class JwtService {
 
     @NonFinal
     @Value("${jwt.accessTokenExpirationTime}")
-    Long ACCESS_TOKEN_EXPIRATION_TIME;
+    Integer ACCESS_TOKEN_EXPIRATION_TIME;
 
     @NonFinal
     @Value("${jwt.refreshTokenKey}")
@@ -41,9 +41,9 @@ public class JwtService {
 
     @NonFinal
     @Value("${jwt.refreshTokenExpirationTime}")
-    Long REFRESH_TOKEN_EXPIRATION_TIME;
+    Integer REFRESH_TOKEN_EXPIRATION_TIME;
 
-    private String generateToken(User user, long expirySeconds, String signerKey, String scope) {
+    private String generateToken(User user, Integer expirySeconds, String signerKey, String scope) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet.Builder claimsBuilder = new JWTClaimsSet.Builder().subject(user.getEmail()).issuer("ml-dev.com").issueTime(new Date()).expirationTime(new Date(Instant.now().plus(expirySeconds, ChronoUnit.SECONDS).toEpochMilli())).jwtID(UUID.randomUUID().toString());
@@ -64,17 +64,24 @@ public class JwtService {
         }
     }
 
-    public SignedJWT verifyToken(String token) throws JOSEException, ParseException {
+    public String generateAccessToken(User user) {
+        return generateToken(user, ACCESS_TOKEN_EXPIRATION_TIME, ACCESS_TOKEN_KEY, "ADMIN");
+    }
+
+    public String generateRefreshToken(User user) {
+        return generateToken(user, REFRESH_TOKEN_EXPIRATION_TIME, REFRESH_TOKEN_KEY, null);
+    }
+
+    public SignedJWT verifyRefreshToken(String token) throws JOSEException, ParseException {
         JWSVerifier verifier = new MACVerifier(REFRESH_TOKEN_KEY.getBytes());
 
         SignedJWT signedJWT = SignedJWT.parse(token);
 
-        Date expiryTime = new Date(
-                signedJWT.getJWTClaimsSet()
-                        .getIssueTime()
-                        .toInstant()
-                        .plus(REFRESH_TOKEN_EXPIRATION_TIME, ChronoUnit.SECONDS)
-                        .toEpochMilli());
+        Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+        if (expiryTime == null || expiryTime.before(new Date())) {
+            throw new AppException("Token expired", HttpStatus.UNAUTHORIZED);
+        }
 
         var verified = signedJWT.verify(verifier);
 
@@ -82,13 +89,5 @@ public class JwtService {
             throw new AppException("Unauthorized", HttpStatus.UNAUTHORIZED);
 
         return signedJWT;
-    }
-
-    public String generateAccessToken(User user) {
-        return generateToken(user, ACCESS_TOKEN_EXPIRATION_TIME, ACCESS_TOKEN_KEY, "ADMIN");
-    }
-
-    public String generateRefreshToken(User user) {
-        return generateToken(user, REFRESH_TOKEN_EXPIRATION_TIME, REFRESH_TOKEN_KEY, null);
     }
 }

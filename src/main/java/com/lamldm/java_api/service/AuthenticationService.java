@@ -61,7 +61,7 @@ public class AuthenticationService {
     }
 
     public AuthResponse refresh(RefreshRequest request) throws ParseException, JOSEException {
-        SignedJWT signJWT = jwtService.verifyToken(request.getRefreshToken());
+        SignedJWT signJWT = jwtService.verifyRefreshToken(request.getRefreshToken());
         String email = signJWT.getJWTClaimsSet().getSubject();
 
         User user = userRepository
