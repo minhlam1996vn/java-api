@@ -3,7 +3,6 @@ package com.lamldm.java_api.controller;
 import com.lamldm.java_api.dto.request.permission.PermissionCreateRequest;
 import com.lamldm.java_api.dto.response.ApiResponse;
 import com.lamldm.java_api.dto.response.permission.PermissionResponse;
-import com.lamldm.java_api.dto.response.permission.PermissionListResponse;
 import com.lamldm.java_api.service.PermissionService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -23,10 +22,10 @@ public class PermissionController {
     PermissionService permissionService;
 
     @GetMapping
-    ApiResponse<List<PermissionListResponse>> index() {
-        List<PermissionListResponse> permissions = permissionService.getAllPermissions();
+    ApiResponse<List<PermissionResponse>> index() {
+        List<PermissionResponse> permissions = permissionService.getAllPermissions();
 
-        return ApiResponse.<List<PermissionListResponse>>builder()
+        return ApiResponse.<List<PermissionResponse>>builder()
                 .result(permissions)
                 .build();
     }

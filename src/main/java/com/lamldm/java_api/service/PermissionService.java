@@ -2,7 +2,6 @@ package com.lamldm.java_api.service;
 
 import com.lamldm.java_api.dto.request.permission.PermissionCreateRequest;
 import com.lamldm.java_api.dto.response.permission.PermissionResponse;
-import com.lamldm.java_api.dto.response.permission.PermissionListResponse;
 import com.lamldm.java_api.entity.Permission;
 import com.lamldm.java_api.exception.AppException;
 import com.lamldm.java_api.mapper.PermissionMapper;
@@ -24,17 +23,17 @@ public class PermissionService {
     PermissionRepository permissionRepository;
     PermissionMapper permissionMapper;
 
-    public List<PermissionListResponse> getAllPermissions() {
+    public List<PermissionResponse> getAllPermissions() {
         List<Permission> permissions = permissionRepository.findAll();
 
-        return permissions.stream().map(permissionMapper::toPermissionListResponse).toList();
+        return permissions.stream().map(permissionMapper::toPermissionResponse).toList();
     }
 
     public PermissionResponse createPermission(PermissionCreateRequest request) {
         Permission permission = permissionMapper.toCreatePermissionRequest(request);
         Permission createdPermission = permissionRepository.save(permission);
 
-        return permissionMapper.toCreatePermissionResponse(createdPermission);
+        return permissionMapper.toPermissionResponse(createdPermission);
     }
 
     public void deletePermission(String name) {
