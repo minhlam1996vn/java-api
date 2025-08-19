@@ -4,7 +4,9 @@ import com.lamldm.java_api.entity.User;
 import com.lamldm.java_api.exception.AppException;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -29,8 +32,16 @@ public class JwtService {
     String ACCESS_TOKEN_KEY;
 
     @NonFinal
+    @Value("${jwt.accessTokenExpirationTime}")
+    Long ACCESS_TOKEN_EXPIRATION_TIME;
+
+    @NonFinal
     @Value("${jwt.refreshTokenKey}")
     String REFRESH_TOKEN_KEY;
+
+    @NonFinal
+    @Value("${jwt.refreshTokenExpirationTime}")
+    Long REFRESH_TOKEN_EXPIRATION_TIME;
 
     private String generateToken(User user, long expirySeconds, String signerKey, String scope) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
@@ -53,11 +64,31 @@ public class JwtService {
         }
     }
 
-    public String generateAccessToken(User user, long expirySeconds) {
-        return generateToken(user, expirySeconds, ACCESS_TOKEN_KEY, "ADMIN");
+    public SignedJWT verifyToken(String token) throws JOSEException, ParseException {
+        JWSVerifier verifier = new MACVerifier(REFRESH_TOKEN_KEY.getBytes());
+
+        SignedJWT signedJWT = SignedJWT.parse(token);
+
+        Date expiryTime = new Date(
+                signedJWT.getJWTClaimsSet()
+                        .getIssueTime()
+                        .toInstant()
+                        .plus(REFRESH_TOKEN_EXPIRATION_TIME, ChronoUnit.SECONDS)
+                        .toEpochMilli());
+
+        var verified = signedJWT.verify(verifier);
+
+        if (!(verified && expiryTime.after(new Date())))
+            throw new AppException("Unauthorized", HttpStatus.UNAUTHORIZED);
+
+        return signedJWT;
     }
 
-    public String generateRefreshToken(User user, long expirySeconds) {
-        return generateToken(user, expirySeconds, REFRESH_TOKEN_KEY, null);
+    public String generateAccessToken(User user) {
+        return generateToken(user, ACCESS_TOKEN_EXPIRATION_TIME, ACCESS_TOKEN_KEY, "ADMIN");
+    }
+
+    public String generateRefreshToken(User user) {
+        return generateToken(user, REFRESH_TOKEN_EXPIRATION_TIME, REFRESH_TOKEN_KEY, null);
     }
 }

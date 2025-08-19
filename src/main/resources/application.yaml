@@ -19,4 +19,6 @@ logging:
 
 jwt:
   accessTokenKey: EWEg9gL8oQJQtCGJmBWkE5kxHDtzzvWsuco+SndzIDeiCISJc1/jXdAek7dfqs/B
+  accessTokenExpirationTime: 30
   refreshTokenKey: OPjBBvOA8TUjUOWLhVtn5EdxOx7ndIsECGweKc3HWGk9wtYHI6oFHd4xBVq1KGGY
+  refreshTokenExpirationTime: 120

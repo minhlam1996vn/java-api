@@ -7,12 +7,15 @@ import com.lamldm.java_api.dto.response.ApiResponse;
 import com.lamldm.java_api.dto.response.auth.AuthResponse;
 import com.lamldm.java_api.dto.response.user.UserResponse;
 import com.lamldm.java_api.service.AuthenticationService;
+import com.nimbusds.jose.JOSEException;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.ParseException;
 
 @RestController
 @RequestMapping("/auth")
@@ -41,7 +44,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
-    ApiResponse<AuthResponse> refresh(@RequestBody @Valid RefreshRequest request) {
+    ApiResponse<AuthResponse> refresh(@RequestBody @Valid RefreshRequest request) throws ParseException, JOSEException {
         AuthResponse refreshResponse = authenticationService.refresh(request);
 
         return ApiResponse.<AuthResponse>builder()

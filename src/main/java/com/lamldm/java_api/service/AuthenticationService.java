@@ -10,6 +10,8 @@ import com.lamldm.java_api.exception.AppException;
 import com.lamldm.java_api.mapper.AuthMapper;
 import com.lamldm.java_api.mapper.UserMapper;
 import com.lamldm.java_api.repository.UserRepository;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,6 +21,8 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.text.ParseException;
 
 @Service
 @RequiredArgsConstructor
@@ -39,8 +43,8 @@ public class AuthenticationService {
                 .filter(foundUser -> passwordEncoder.matches(request.getPassword(), foundUser.getPassword()))
                 .orElseThrow(() -> new AppException("Unauthorized", HttpStatus.UNAUTHORIZED));
 
-        String accessToken = jwtService.generateAccessToken(user, 900);
-        String refreshToken = jwtService.generateRefreshToken(user, 604800);
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
 
         return authMapper.toAuthResponse(accessToken, refreshToken);
     }
@@ -56,9 +60,16 @@ public class AuthenticationService {
         return userMapper.toUserResponse(user);
     }
 
-    public AuthResponse refresh(RefreshRequest request) {
-        String accessToken = request.getRefreshToken();
-        String refreshToken = request.getRefreshToken();
+    public AuthResponse refresh(RefreshRequest request) throws ParseException, JOSEException {
+        SignedJWT signJWT = jwtService.verifyToken(request.getRefreshToken());
+        String email = signJWT.getJWTClaimsSet().getSubject();
+
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new AppException("Unauthorized", HttpStatus.UNAUTHORIZED));
+
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
 
         return authMapper.toAuthResponse(accessToken, refreshToken);
     }
