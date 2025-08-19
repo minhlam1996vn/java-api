@@ -74,7 +74,8 @@ public class AuthenticationService {
         return authMapper.toAuthResponse(accessToken, refreshToken);
     }
 
-    public void logout(LogoutRequest request) {
-        log.info(request.toString(), request);
+    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+        SignedJWT signJWT = jwtService.verifyAccessToken(request.getAccessToken());
+        log.info("Logout request: {}", signJWT.getJWTClaimsSet().toString());
     }
 }

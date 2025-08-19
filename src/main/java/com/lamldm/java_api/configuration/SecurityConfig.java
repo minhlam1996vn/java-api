@@ -30,15 +30,14 @@ public class SecurityConfig {
     String ACCESS_TOKEN_KEY;
 
     String[] PUBLIC_ENDPOINTS = {
-            "/auth/*",
     };
 
     String[] PUBLIC_GET_ENDPOINTS = {
-            "/users/*"
     };
 
     String[] PUBLIC_POST_ENDPOINTS = {
-            "/users"
+            "/auth/login",
+            "/auth/refresh",
     };
 
     String[] PUBLIC_PUT_ENDPOINTS = {
