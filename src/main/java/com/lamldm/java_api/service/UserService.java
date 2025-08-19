@@ -2,10 +2,8 @@ package com.lamldm.java_api.service;
 
 import com.lamldm.java_api.dto.request.user.UserCreateRequest;
 import com.lamldm.java_api.dto.request.user.UserUpdateRequest;
-import com.lamldm.java_api.dto.response.user.UserCreateResponse;
-import com.lamldm.java_api.dto.response.user.UserDetailResponse;
+import com.lamldm.java_api.dto.response.user.UserResponse;
 import com.lamldm.java_api.dto.response.user.UserListResponse;
-import com.lamldm.java_api.dto.response.user.UserUpdateResponse;
 import com.lamldm.java_api.entity.Role;
 import com.lamldm.java_api.entity.User;
 import com.lamldm.java_api.enums.RoleUser;
@@ -45,7 +43,7 @@ public class UserService {
         return userMapper.toUserListResponse(users);
     }
 
-    public UserCreateResponse createUser(UserCreateRequest request) {
+    public void createUser(UserCreateRequest request) {
         User user = userMapper.toUserCreateRequest(request);
         String encodePassword = passwordEncoder.encode(request.getPassword());
         user.setPassword(encodePassword);
@@ -54,18 +52,16 @@ public class UserService {
         List<Role> roles = roleRepository.findAllById(defaultRoles);
         user.setRoles(new HashSet<>(roles));
 
-        User createdUser = userRepository.save(user);
-
-        return userMapper.toUserCreateResponse(createdUser);
+        userRepository.save(user);
     }
 
-    public UserDetailResponse getUserById(Integer userId) {
+    public UserResponse getUserById(Integer userId) {
         User user = getUserOrThrow(userId);
 
         return userMapper.toUserDetailResponse(user);
     }
 
-    public UserUpdateResponse updateUser(Integer userId, UserUpdateRequest request) {
+    public void updateUser(Integer userId, UserUpdateRequest request) {
         User user = getUserOrThrow(userId);
 
         userMapper.toUserUpdateRequest(user, request);
@@ -76,9 +72,7 @@ public class UserService {
             user.setRoles(new HashSet<>(roles));
         }
 
-        User updatedUser = userRepository.save(user);
-
-        return userMapper.toUserUpdateResponse(updatedUser);
+        userRepository.save(user);
     }
 
     public void deleteUser(Integer userId) {

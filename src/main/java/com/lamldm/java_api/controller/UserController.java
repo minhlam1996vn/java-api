@@ -3,10 +3,8 @@ package com.lamldm.java_api.controller;
 import com.lamldm.java_api.dto.request.user.UserCreateRequest;
 import com.lamldm.java_api.dto.request.user.UserUpdateRequest;
 import com.lamldm.java_api.dto.response.ApiResponse;
-import com.lamldm.java_api.dto.response.user.UserCreateResponse;
-import com.lamldm.java_api.dto.response.user.UserDetailResponse;
+import com.lamldm.java_api.dto.response.user.UserResponse;
 import com.lamldm.java_api.dto.response.user.UserListResponse;
-import com.lamldm.java_api.dto.response.user.UserUpdateResponse;
 import com.lamldm.java_api.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -35,34 +33,32 @@ public class UserController {
     }
 
     @PostMapping
-    ApiResponse<UserCreateResponse> store(@RequestBody @Valid UserCreateRequest request) {
-        UserCreateResponse user = userService.createUser(request);
+    ApiResponse<String> store(@RequestBody @Valid UserCreateRequest request) {
+        userService.createUser(request);
 
-        return ApiResponse.<UserCreateResponse>builder()
+        return ApiResponse.<String>builder()
                 .message("Created")
-                .result(user)
                 .build();
     }
 
     @GetMapping("/{userId}")
-    ApiResponse<UserDetailResponse> show(@PathVariable("userId") Integer userId) {
-        UserDetailResponse user = userService.getUserById(userId);
+    ApiResponse<UserResponse> show(@PathVariable("userId") Integer userId) {
+        UserResponse user = userService.getUserById(userId);
 
-        return ApiResponse.<UserDetailResponse>builder()
+        return ApiResponse.<UserResponse>builder()
                 .result(user)
                 .build();
     }
 
     @PutMapping("/{userId}")
-    ApiResponse<UserUpdateResponse> update(
+    ApiResponse<String> update(
             @PathVariable("userId") Integer userId,
             @RequestBody @Valid UserUpdateRequest request
     ) {
-        UserUpdateResponse user = userService.updateUser(userId, request);
+        userService.updateUser(userId, request);
 
-        return ApiResponse.<UserUpdateResponse>builder()
+        return ApiResponse.<String>builder()
                 .message("Updated")
-                .result(user)
                 .build();
     }
 
