@@ -15,11 +15,12 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RoleCreateRequest {
     @NotBlank
-    @Pattern(regexp = "^[A-Z]+$", message = "Name must be uppercase letters only")
+    @Pattern(regexp = "^[A-Z]+$")
     String name;
 
     @Size(min = 1, max = 100)
     String description;
 
-    Set<String> permissions;
+    @Size(min = 1, max = 50)
+    Set<@NotBlank @Pattern(regexp = "^[A-Z0-9_]+$") String> permissions;
 }

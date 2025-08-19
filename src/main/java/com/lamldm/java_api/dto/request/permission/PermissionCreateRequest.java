@@ -13,7 +13,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PermissionCreateRequest {
     @NotBlank
-    @Pattern(regexp = "^[A-Z]+$", message = "Name must be uppercase letters only")
+    @Pattern(regexp = "^[A-Z_]+$")
     String name;
 
     @Size(min = 1, max = 100)
