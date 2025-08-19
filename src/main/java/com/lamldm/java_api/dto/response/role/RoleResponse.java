@@ -1,6 +1,6 @@
 package com.lamldm.java_api.dto.response.role;
 
-import com.lamldm.java_api.dto.response.permission.PermissionCreateResponse;
+import com.lamldm.java_api.dto.response.permission.PermissionResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,8 +11,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RoleCreateResponse {
+public class RoleResponse {
     String name;
     String description;
-    Set<PermissionCreateResponse> permissions;
+    Set<PermissionResponse> permissions;
 }

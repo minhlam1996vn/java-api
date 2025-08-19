@@ -1,7 +1,7 @@
 package com.lamldm.java_api.mapper;
 
 import com.lamldm.java_api.dto.request.permission.PermissionCreateRequest;
-import com.lamldm.java_api.dto.response.permission.PermissionCreateResponse;
+import com.lamldm.java_api.dto.response.permission.PermissionResponse;
 import com.lamldm.java_api.dto.response.permission.PermissionListResponse;
 import com.lamldm.java_api.entity.Permission;
 import org.mapstruct.Mapper;
@@ -11,7 +11,7 @@ public interface PermissionMapper {
     // Create mapping
     Permission toCreatePermissionRequest(PermissionCreateRequest request);
 
-    PermissionCreateResponse toCreatePermissionResponse(Permission permission);
+    PermissionResponse toCreatePermissionResponse(Permission permission);
 
     // List mapping
     PermissionListResponse toPermissionListResponse(Permission permission);

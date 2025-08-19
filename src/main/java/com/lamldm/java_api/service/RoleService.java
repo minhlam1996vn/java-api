@@ -1,7 +1,7 @@
 package com.lamldm.java_api.service;
 
 import com.lamldm.java_api.dto.request.role.RoleCreateRequest;
-import com.lamldm.java_api.dto.response.role.RoleCreateResponse;
+import com.lamldm.java_api.dto.response.role.RoleResponse;
 import com.lamldm.java_api.entity.Permission;
 import com.lamldm.java_api.entity.Role;
 import com.lamldm.java_api.mapper.RoleMapper;
@@ -27,7 +27,7 @@ public class RoleService {
 
     RoleMapper roleMapper;
 
-    public RoleCreateResponse createRole(RoleCreateRequest request) {
+    public RoleResponse createRole(RoleCreateRequest request) {
         Role role = roleMapper.toRoleCreateRequest(request);
         List<Permission> permissions = permissionRepository.findAllById(request.getPermissions());
 
@@ -37,7 +37,7 @@ public class RoleService {
         return roleMapper.toRoleCreateResponse(createRole);
     }
 
-    public List<RoleCreateResponse> getAllRoles() {
+    public List<RoleResponse> getAllRoles() {
         return roleRepository.findAll()
                 .stream()
                 .map(roleMapper::toRoleCreateResponse)

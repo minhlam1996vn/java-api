@@ -2,7 +2,7 @@ package com.lamldm.java_api.controller;
 
 import com.lamldm.java_api.dto.request.role.RoleCreateRequest;
 import com.lamldm.java_api.dto.response.ApiResponse;
-import com.lamldm.java_api.dto.response.role.RoleCreateResponse;
+import com.lamldm.java_api.dto.response.role.RoleResponse;
 import com.lamldm.java_api.service.RoleService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -22,19 +22,19 @@ public class RoleController {
     RoleService roleService;
 
     @GetMapping
-    ApiResponse<List<RoleCreateResponse>> index() {
-        List<RoleCreateResponse> roles = roleService.getAllRoles();
+    ApiResponse<List<RoleResponse>> index() {
+        List<RoleResponse> roles = roleService.getAllRoles();
 
-        return ApiResponse.<List<RoleCreateResponse>>builder()
+        return ApiResponse.<List<RoleResponse>>builder()
                 .result(roles)
                 .build();
     }
 
     @PostMapping
-    ApiResponse<RoleCreateResponse> store(@RequestBody @Valid RoleCreateRequest request) {
-        RoleCreateResponse role = roleService.createRole(request);
+    ApiResponse<RoleResponse> store(@RequestBody @Valid RoleCreateRequest request) {
+        RoleResponse role = roleService.createRole(request);
 
-        return ApiResponse.<RoleCreateResponse>builder()
+        return ApiResponse.<RoleResponse>builder()
                 .result(role)
                 .build();
     }

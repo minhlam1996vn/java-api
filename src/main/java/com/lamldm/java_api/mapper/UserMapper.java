@@ -8,6 +8,7 @@ import com.lamldm.java_api.dto.response.user.UserListResponse;
 import com.lamldm.java_api.dto.response.user.UserUpdateResponse;
 import com.lamldm.java_api.entity.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public interface UserMapper {
 
 
     // Update mapping
+    @Mapping(target = "roles", ignore = true)
     void toUserUpdateRequest(@MappingTarget User user, UserUpdateRequest request);
 
     UserUpdateResponse toUserUpdateResponse(User user);

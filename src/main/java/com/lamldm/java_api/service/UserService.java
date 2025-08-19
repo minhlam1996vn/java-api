@@ -6,9 +6,11 @@ import com.lamldm.java_api.dto.response.user.UserCreateResponse;
 import com.lamldm.java_api.dto.response.user.UserDetailResponse;
 import com.lamldm.java_api.dto.response.user.UserListResponse;
 import com.lamldm.java_api.dto.response.user.UserUpdateResponse;
+import com.lamldm.java_api.entity.Role;
 import com.lamldm.java_api.entity.User;
 import com.lamldm.java_api.exception.AppException;
 import com.lamldm.java_api.mapper.UserMapper;
+import com.lamldm.java_api.repository.RoleRepository;
 import com.lamldm.java_api.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -26,12 +29,12 @@ import java.util.List;
 @Slf4j
 public class UserService {
     UserRepository userRepository;
+    RoleRepository roleRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
     private User getUserOrThrow(Integer userId) {
-        return userRepository.findById(userId).orElseThrow(
-                () -> new AppException("User not found", HttpStatus.NOT_FOUND));
+        return userRepository.findById(userId).orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
     }
 
     public List<UserListResponse> getAllUsers() {
@@ -57,7 +60,15 @@ public class UserService {
 
     public UserUpdateResponse updateUser(Integer userId, UserUpdateRequest request) {
         User user = getUserOrThrow(userId);
+
         userMapper.toUserUpdateRequest(user, request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
+            List<Role> roles = roleRepository.findAllById(request.getRoles());
+            user.setRoles(new HashSet<>(roles));
+        }
+
         User updatedUser = userRepository.save(user);
 
         return userMapper.toUserUpdateResponse(updatedUser);

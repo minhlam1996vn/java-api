@@ -2,7 +2,7 @@ package com.lamldm.java_api.controller;
 
 import com.lamldm.java_api.dto.request.permission.PermissionCreateRequest;
 import com.lamldm.java_api.dto.response.ApiResponse;
-import com.lamldm.java_api.dto.response.permission.PermissionCreateResponse;
+import com.lamldm.java_api.dto.response.permission.PermissionResponse;
 import com.lamldm.java_api.dto.response.permission.PermissionListResponse;
 import com.lamldm.java_api.service.PermissionService;
 import jakarta.validation.Valid;
@@ -32,10 +32,10 @@ public class PermissionController {
     }
 
     @PostMapping
-    ApiResponse<PermissionCreateResponse> store(@RequestBody @Valid PermissionCreateRequest request) {
-        PermissionCreateResponse permission = permissionService.createPermission(request);
+    ApiResponse<PermissionResponse> store(@RequestBody @Valid PermissionCreateRequest request) {
+        PermissionResponse permission = permissionService.createPermission(request);
 
-        return ApiResponse.<PermissionCreateResponse>builder()
+        return ApiResponse.<PermissionResponse>builder()
                 .message("Created permission")
                 .result(permission)
                 .build();
