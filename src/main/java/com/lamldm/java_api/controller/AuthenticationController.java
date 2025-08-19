@@ -4,8 +4,7 @@ import com.lamldm.java_api.dto.request.auth.LoginRequest;
 import com.lamldm.java_api.dto.request.auth.LogoutRequest;
 import com.lamldm.java_api.dto.request.auth.RefreshRequest;
 import com.lamldm.java_api.dto.response.ApiResponse;
-import com.lamldm.java_api.dto.response.auth.LoginResponse;
-import com.lamldm.java_api.dto.response.auth.RefreshResponse;
+import com.lamldm.java_api.dto.response.auth.AuthResponse;
 import com.lamldm.java_api.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -26,19 +25,19 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    ApiResponse<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
-        LoginResponse loginResponse = authenticationService.login(request);
+    ApiResponse<AuthResponse> login(@RequestBody @Valid LoginRequest request) {
+        AuthResponse loginResponse = authenticationService.login(request);
 
-        return ApiResponse.<LoginResponse>builder()
+        return ApiResponse.<AuthResponse>builder()
                 .result(loginResponse)
                 .build();
     }
 
     @PostMapping("/refresh")
-    ApiResponse<RefreshResponse> refresh(@RequestBody @Valid RefreshRequest request) {
-        RefreshResponse refreshResponse = authenticationService.refresh(request);
+    ApiResponse<AuthResponse> refresh(@RequestBody @Valid RefreshRequest request) {
+        AuthResponse refreshResponse = authenticationService.refresh(request);
 
-        return ApiResponse.<RefreshResponse>builder()
+        return ApiResponse.<AuthResponse>builder()
                 .result(refreshResponse)
                 .build();
     }

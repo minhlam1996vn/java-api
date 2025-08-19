@@ -3,8 +3,7 @@ package com.lamldm.java_api.service;
 import com.lamldm.java_api.dto.request.auth.LoginRequest;
 import com.lamldm.java_api.dto.request.auth.LogoutRequest;
 import com.lamldm.java_api.dto.request.auth.RefreshRequest;
-import com.lamldm.java_api.dto.response.auth.LoginResponse;
-import com.lamldm.java_api.dto.response.auth.RefreshResponse;
+import com.lamldm.java_api.dto.response.auth.AuthResponse;
 import com.lamldm.java_api.entity.User;
 import com.lamldm.java_api.exception.AppException;
 import com.lamldm.java_api.mapper.AuthMapper;
@@ -29,7 +28,7 @@ public class AuthenticationService {
 
     AuthMapper authMapper;
 
-    public LoginResponse login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .filter(foundUser -> passwordEncoder.matches(request.getPassword(), foundUser.getPassword()))
                 .orElseThrow(() -> new AppException("Unauthorized", HttpStatus.UNAUTHORIZED));
@@ -37,14 +36,14 @@ public class AuthenticationService {
         String accessToken = jwtService.generateAccessToken(user, 900);
         String refreshToken = jwtService.generateRefreshToken(user, 604800);
 
-        return authMapper.toLoginResponse(accessToken, refreshToken);
+        return authMapper.toAuthResponse(accessToken, refreshToken);
     }
 
-    public RefreshResponse refresh(RefreshRequest request) {
+    public AuthResponse refresh(RefreshRequest request) {
         String accessToken = request.getRefreshToken();
         String refreshToken = request.getRefreshToken();
 
-        return authMapper.toRefreshResponse(accessToken, refreshToken);
+        return authMapper.toAuthResponse(accessToken, refreshToken);
     }
 
     public void logout(LogoutRequest request) {
