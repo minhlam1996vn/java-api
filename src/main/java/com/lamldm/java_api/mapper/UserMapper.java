@@ -13,16 +13,14 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    // Create mapping
+    // Mapping request
     User toUserCreateRequest(UserCreateRequest request);
 
-    // Update mapping
     @Mapping(target = "roles", ignore = true)
     void toUserUpdateRequest(@MappingTarget User user, UserUpdateRequest request);
 
-    // Detail mapping
-    UserResponse toUserDetailResponse(User user);
+    // Mapping response
+    UserResponse toUserResponse(User user);
 
-    // List mapping
     List<UserListResponse> toUserListResponse(List<User> users);
 }

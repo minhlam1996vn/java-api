@@ -5,16 +5,14 @@ import com.lamldm.java_api.dto.request.auth.LogoutRequest;
 import com.lamldm.java_api.dto.request.auth.RefreshRequest;
 import com.lamldm.java_api.dto.response.ApiResponse;
 import com.lamldm.java_api.dto.response.auth.AuthResponse;
+import com.lamldm.java_api.dto.response.user.UserResponse;
 import com.lamldm.java_api.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -30,6 +28,15 @@ public class AuthenticationController {
 
         return ApiResponse.<AuthResponse>builder()
                 .result(loginResponse)
+                .build();
+    }
+
+    @GetMapping("/me")
+    ApiResponse<UserResponse> me() {
+        UserResponse user = authenticationService.getMe();
+
+        return ApiResponse.<UserResponse>builder()
+                .result(user)
                 .build();
     }
 

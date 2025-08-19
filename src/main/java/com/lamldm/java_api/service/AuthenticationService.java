@@ -4,15 +4,19 @@ import com.lamldm.java_api.dto.request.auth.LoginRequest;
 import com.lamldm.java_api.dto.request.auth.LogoutRequest;
 import com.lamldm.java_api.dto.request.auth.RefreshRequest;
 import com.lamldm.java_api.dto.response.auth.AuthResponse;
+import com.lamldm.java_api.dto.response.user.UserResponse;
 import com.lamldm.java_api.entity.User;
 import com.lamldm.java_api.exception.AppException;
 import com.lamldm.java_api.mapper.AuthMapper;
+import com.lamldm.java_api.mapper.UserMapper;
 import com.lamldm.java_api.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,9 +31,11 @@ public class AuthenticationService {
     JwtService jwtService;
 
     AuthMapper authMapper;
+    UserMapper userMapper;
 
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository
+                .findByEmail(request.getEmail())
                 .filter(foundUser -> passwordEncoder.matches(request.getPassword(), foundUser.getPassword()))
                 .orElseThrow(() -> new AppException("Unauthorized", HttpStatus.UNAUTHORIZED));
 
@@ -37,6 +43,17 @@ public class AuthenticationService {
         String refreshToken = jwtService.generateRefreshToken(user, 604800);
 
         return authMapper.toAuthResponse(accessToken, refreshToken);
+    }
+
+    public UserResponse getMe() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        String email = securityContext.getAuthentication().getName();
+
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new AppException("Unauthorized", HttpStatus.UNAUTHORIZED));
+
+        return userMapper.toUserResponse(user);
     }
 
     public AuthResponse refresh(RefreshRequest request) {

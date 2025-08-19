@@ -8,8 +8,10 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
+    // Mapping request
     @Mapping(target = "permissions", ignore = true)
     Role toRoleCreateRequest(RoleCreateRequest request);
 
+    // Mapping response
     RoleResponse toRoleCreateResponse(Role role);
 }

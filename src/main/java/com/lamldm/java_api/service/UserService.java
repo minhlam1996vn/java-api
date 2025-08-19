@@ -58,7 +58,7 @@ public class UserService {
     public UserResponse getUserById(Integer userId) {
         User user = getUserOrThrow(userId);
 
-        return userMapper.toUserDetailResponse(user);
+        return userMapper.toUserResponse(user);
     }
 
     public void updateUser(Integer userId, UserUpdateRequest request) {
