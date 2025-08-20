@@ -42,7 +42,23 @@ public class JwtService {
     @Value("${jwt.refreshTokenExpirationTime}")
     Long REFRESH_TOKEN_EXPIRATION_TIME;
 
-    private String generateToken(User user, String jwtId, Long expirySeconds, String signerKey, String scope) {
+    public String generateAccessToken(User user, String jwtId) {
+        return buildToken(user, jwtId, ACCESS_TOKEN_EXPIRATION_TIME, ACCESS_TOKEN_KEY, "ADMIN");
+    }
+
+    public String generateRefreshToken(User user, String jwtId) {
+        return buildToken(user, jwtId, REFRESH_TOKEN_EXPIRATION_TIME, REFRESH_TOKEN_KEY, null);
+    }
+
+    public SignedJWT verifyAccessToken(String token) throws JOSEException, ParseException {
+        return verifyToken(token, ACCESS_TOKEN_KEY);
+    }
+
+    public SignedJWT verifyRefreshToken(String token) throws JOSEException, ParseException {
+        return verifyToken(token, REFRESH_TOKEN_KEY);
+    }
+
+    private String buildToken(User user, String jwtId, Long expirySeconds, String signerKey, String scope) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet.Builder claimsBuilder = new JWTClaimsSet.Builder()
@@ -83,21 +99,5 @@ public class JwtService {
         }
 
         return signedJWT;
-    }
-
-    public String generateAccessToken(User user, String jwtId) {
-        return generateToken(user, jwtId, ACCESS_TOKEN_EXPIRATION_TIME, ACCESS_TOKEN_KEY, "ADMIN");
-    }
-
-    public String generateRefreshToken(User user, String jwtId) {
-        return generateToken(user, jwtId, REFRESH_TOKEN_EXPIRATION_TIME, REFRESH_TOKEN_KEY, null);
-    }
-
-    public SignedJWT verifyAccessToken(String token) throws JOSEException, ParseException {
-        return verifyToken(token, ACCESS_TOKEN_KEY);
-    }
-
-    public SignedJWT verifyRefreshToken(String token) throws JOSEException, ParseException {
-        return verifyToken(token, REFRESH_TOKEN_KEY);
     }
 }

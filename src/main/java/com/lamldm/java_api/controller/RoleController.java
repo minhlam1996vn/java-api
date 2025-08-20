@@ -44,6 +44,7 @@ public class RoleController {
         roleService.deleteRole(role);
 
         return ApiResponse.<Void>builder()
+                .message("Deleted")
                 .build();
     }
 }

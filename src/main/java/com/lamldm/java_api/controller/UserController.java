@@ -33,10 +33,10 @@ public class UserController {
     }
 
     @PostMapping
-    ApiResponse<String> store(@RequestBody @Valid UserCreateRequest request) {
+    ApiResponse<Void> store(@RequestBody @Valid UserCreateRequest request) {
         userService.createUser(request);
 
-        return ApiResponse.<String>builder()
+        return ApiResponse.<Void>builder()
                 .message("Created")
                 .build();
     }
@@ -51,23 +51,23 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    ApiResponse<String> update(
+    ApiResponse<Void> update(
             @PathVariable("userId") Integer userId,
             @RequestBody @Valid UserUpdateRequest request
     ) {
         userService.updateUser(userId, request);
 
-        return ApiResponse.<String>builder()
+        return ApiResponse.<Void>builder()
                 .message("Updated")
                 .build();
     }
 
     @DeleteMapping("/{userId}")
-    ApiResponse<String> destroy(@PathVariable("userId") Integer userId) {
+    ApiResponse<Void> destroy(@PathVariable("userId") Integer userId) {
         userService.deleteUser(userId);
 
-        return ApiResponse.<String>builder()
-                .result("Deleted")
+        return ApiResponse.<Void>builder()
+                .message("Deleted")
                 .build();
     }
 }

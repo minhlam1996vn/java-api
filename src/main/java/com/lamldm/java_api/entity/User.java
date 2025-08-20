@@ -15,6 +15,7 @@ import java.util.Set;
 @SQLRestriction("deleted_at IS NULL")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)

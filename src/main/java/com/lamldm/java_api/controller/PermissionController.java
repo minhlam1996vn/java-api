@@ -41,11 +41,11 @@ public class PermissionController {
     }
 
     @DeleteMapping("/{permissionName}")
-    ApiResponse<String> destroy(@PathVariable("permissionName") String permissionName) {
+    ApiResponse<Void> destroy(@PathVariable("permissionName") String permissionName) {
         permissionService.deletePermission(permissionName);
 
-        return ApiResponse.<String>builder()
-                .result("Deleted permission")
+        return ApiResponse.<Void>builder()
+                .message("Deleted permission")
                 .build();
     }
 }

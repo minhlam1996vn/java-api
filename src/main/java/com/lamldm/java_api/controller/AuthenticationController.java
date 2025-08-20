@@ -1,7 +1,6 @@
 package com.lamldm.java_api.controller;
 
 import com.lamldm.java_api.dto.request.auth.LoginRequest;
-import com.lamldm.java_api.dto.request.auth.LogoutRequest;
 import com.lamldm.java_api.dto.request.auth.RefreshRequest;
 import com.lamldm.java_api.dto.response.ApiResponse;
 import com.lamldm.java_api.dto.response.auth.AuthResponse;
@@ -44,7 +43,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
-    ApiResponse<AuthResponse> refresh(@RequestBody @Valid RefreshRequest request) throws ParseException, JOSEException {
+    ApiResponse<AuthResponse> refresh(@RequestBody @Valid RefreshRequest request)
+            throws ParseException, JOSEException {
         AuthResponse refreshResponse = authenticationService.refresh(request);
 
         return ApiResponse.<AuthResponse>builder()
@@ -53,10 +53,11 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
-    ApiResponse<Void> logout(@RequestBody @Valid LogoutRequest request) throws ParseException, JOSEException {
-        authenticationService.logout(request);
+    ApiResponse<Void> logout() {
+        authenticationService.logout();
 
         return ApiResponse.<Void>builder()
+                .message("Logged out")
                 .build();
     }
 }

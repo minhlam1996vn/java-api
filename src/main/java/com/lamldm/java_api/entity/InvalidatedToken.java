@@ -1,22 +1,23 @@
 package com.lamldm.java_api.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Date;
+
 @Entity
-@Table(name = "permissions")
+@Table(name = "invalidated_tokens")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Permission {
+public class InvalidatedToken {
     @Id
-    String name;
+    String id;
 
-    String description;
+    @Column(nullable = false)
+    Date expiryTime;
 }
