@@ -30,7 +30,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         Map<String, String> body = new LinkedHashMap<>();
         body.put("method", request.getMethod());
         body.put("path", request.getRequestURI());
-        body.put("message", authException.getMessage());
+        body.put("error", authException.getMessage());
 
         ApiResponse<Map<String, String>> apiResponse = ApiResponse.<Map<String, String>>builder()
                 .status(false)

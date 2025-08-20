@@ -1,5 +1,6 @@
 package com.lamldm.java_api.service;
 
+import com.lamldm.java_api.entity.Permission;
 import com.lamldm.java_api.entity.User;
 import com.lamldm.java_api.exception.AppException;
 import com.nimbusds.jose.*;
@@ -15,11 +16,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -43,18 +47,18 @@ public class JwtService {
     Long REFRESH_TOKEN_EXPIRATION_TIME;
 
     public String generateAccessToken(User user, String jwtId) {
-        return buildToken(user, jwtId, ACCESS_TOKEN_EXPIRATION_TIME, ACCESS_TOKEN_KEY, "ADMIN");
+        return buildToken(user, jwtId, ACCESS_TOKEN_EXPIRATION_TIME, ACCESS_TOKEN_KEY, true);
     }
 
     public String generateRefreshToken(User user, String jwtId) {
-        return buildToken(user, jwtId, REFRESH_TOKEN_EXPIRATION_TIME, REFRESH_TOKEN_KEY, null);
+        return buildToken(user, jwtId, REFRESH_TOKEN_EXPIRATION_TIME, REFRESH_TOKEN_KEY, false);
     }
 
     public SignedJWT verifyRefreshToken(String token) throws JOSEException, ParseException {
         return verifyToken(token, REFRESH_TOKEN_KEY);
     }
 
-    private String buildToken(User user, String jwtId, Long expirySeconds, String signerKey, String scope) {
+    private String buildToken(User user, String jwtId, Long expirySeconds, String signerKey, boolean scope) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet.Builder claimsBuilder = new JWTClaimsSet.Builder()
@@ -64,8 +68,18 @@ public class JwtService {
                 .expirationTime(new Date(Instant.now().plus(expirySeconds, ChronoUnit.SECONDS).toEpochMilli()))
                 .jwtID(jwtId);
 
-        if (scope != null && !scope.isEmpty()) {
-            claimsBuilder.claim("scope", scope);
+        if (scope && !CollectionUtils.isEmpty(user.getRoles())) {
+            String scopeValue = user.getRoles().stream()
+                    .flatMap(role -> {
+                        Stream<String> roleStream = Stream.of("ROLE_" + role.getName());
+                        Stream<String> permissionsStream = CollectionUtils.isEmpty(role.getPermissions())
+                                ? Stream.empty()
+                                : role.getPermissions().stream().map(Permission::getName);
+                        return Stream.concat(roleStream, permissionsStream);
+                    })
+                    .collect(Collectors.joining(" "));
+
+            claimsBuilder.claim("scope", scopeValue);
         }
 
         Payload payload = new Payload(claimsBuilder.build().toJSONObject());

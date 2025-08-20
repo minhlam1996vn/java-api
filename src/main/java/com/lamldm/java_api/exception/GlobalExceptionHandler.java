@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,8 +26,6 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<ApiResponse<Map<String, Object>>> handleException(Exception exception, HttpServletRequest request) {
-//        log.error(exception.getMessage(), exception);
-
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("method", request.getMethod());
         body.put("path", request.getRequestURI());
@@ -58,7 +57,7 @@ public class GlobalExceptionHandler {
         Map<String, String> body = new LinkedHashMap<>();
         body.put("method", request.getMethod());
         body.put("path", request.getRequestURI());
-        body.put("message", exception.getMessage());
+        body.put("error", exception.getMessage());
 
         ApiResponse<Map<String, String>> apiResponse = ApiResponse.<Map<String, String>>builder()
                 .status(false)
@@ -71,6 +70,24 @@ public class GlobalExceptionHandler {
                 .body(apiResponse);
     }
 
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleAuthorizationDeniedException(
+            AuthorizationDeniedException exception
+    ) {
+        Map<String, String> body = new LinkedHashMap<>();
+        body.put("error", exception.getMessage());
+
+        ApiResponse<Map<String, String>> apiResponse = ApiResponse.<Map<String, String>>builder()
+                .status(false)
+                .message(HttpStatus.FORBIDDEN.getReasonPhrase())
+                .result(body)
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(apiResponse);
+    }
+
     /**
      * Handler for validation errors when using @Valid on @RequestBody.
      * - Catches MethodArgumentNotValidException thrown by Spring.
@@ -78,8 +95,6 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, List<String>>>> handleValidationException(MethodArgumentNotValidException exception) {
-//        log.error(exception.getMessage(), exception);
-
         Map<String, List<String>> errors = exception.getBindingResult()
                 .getFieldErrors()
                 .stream()
