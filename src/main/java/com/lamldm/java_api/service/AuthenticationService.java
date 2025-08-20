@@ -16,7 +16,9 @@ import com.nimbusds.jwt.SignedJWT;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +27,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.UUID;
 
@@ -33,6 +37,10 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class AuthenticationService {
+    @NonFinal
+    @Value("${jwt.refreshTokenExpirationTime}")
+    Long REFRESH_TOKEN_EXPIRATION_TIME;
+
     UserRepository userRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
 
@@ -66,10 +74,16 @@ public class AuthenticationService {
     public AuthResponse refresh(RefreshRequest request) throws ParseException, JOSEException {
         SignedJWT signJWT = jwtService.verifyRefreshToken(request.getRefreshToken());
         String email = signJWT.getJWTClaimsSet().getSubject();
+        String jwtId = signJWT.getJWTClaimsSet().getJWTID();
+
+        if (invalidatedTokenRepository.existsById(jwtId))
+            throw new AppException("invalidated token", HttpStatus.UNAUTHORIZED);
 
         User user = userRepository
                 .findByEmail(email)
-                .orElseThrow(() -> new AppException("Unauthorized", HttpStatus.UNAUTHORIZED));
+                .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
+
+        saveInvalidatedToken(jwtId);
 
         return generateTokens(user);
     }
@@ -78,14 +92,8 @@ public class AuthenticationService {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof Jwt jwt) {
-            String jti = jwt.getId();
-
-            InvalidatedToken invalidatedToken = InvalidatedToken.builder()
-                    .id(jti)
-                    .expiryTime(new Date())
-                    .build();
-
-            invalidatedTokenRepository.save(invalidatedToken);
+            String jwtId = jwt.getId();
+            saveInvalidatedToken(jwtId);
         }
     }
 
@@ -95,5 +103,16 @@ public class AuthenticationService {
         String refreshToken = jwtService.generateRefreshToken(user, jwtId);
 
         return authMapper.toAuthResponse(accessToken, refreshToken);
+    }
+
+    private void saveInvalidatedToken(String jwtId) {
+        Instant expiryTime = Instant.now().plus(REFRESH_TOKEN_EXPIRATION_TIME, ChronoUnit.SECONDS);
+
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jwtId)
+                .expiryTime(Date.from(expiryTime))
+                .build();
+
+        invalidatedTokenRepository.save(invalidatedToken);
     }
 }
