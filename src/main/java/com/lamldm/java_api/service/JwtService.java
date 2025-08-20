@@ -50,10 +50,6 @@ public class JwtService {
         return buildToken(user, jwtId, REFRESH_TOKEN_EXPIRATION_TIME, REFRESH_TOKEN_KEY, null);
     }
 
-    public SignedJWT verifyAccessToken(String token) throws JOSEException, ParseException {
-        return verifyToken(token, ACCESS_TOKEN_KEY);
-    }
-
     public SignedJWT verifyRefreshToken(String token) throws JOSEException, ParseException {
         return verifyToken(token, REFRESH_TOKEN_KEY);
     }
