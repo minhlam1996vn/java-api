@@ -77,7 +77,7 @@ public class AuthenticationService {
         String jwtId = signJWT.getJWTClaimsSet().getJWTID();
 
         if (invalidatedTokenRepository.existsById(jwtId))
-            throw new AppException("invalidated token", HttpStatus.UNAUTHORIZED);
+            throw new AppException("Token has been invalidated", HttpStatus.UNAUTHORIZED);
 
         User user = userRepository
                 .findByEmail(email)
