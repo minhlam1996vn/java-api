@@ -1,4 +1,4 @@
-package com.lamldm.java_api.configuration;
+package com.lamldm.java_api.security.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lamldm.java_api.dto.response.ApiResponse;

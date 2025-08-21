@@ -2,6 +2,8 @@ package com.lamldm.java_api.configuration;
 
 import com.lamldm.java_api.enums.RoleUser;
 import com.lamldm.java_api.repository.InvalidatedTokenRepository;
+import com.lamldm.java_api.security.handler.JwtAccessDeniedHandler;
+import com.lamldm.java_api.security.handler.JwtAuthenticationEntryPoint;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
