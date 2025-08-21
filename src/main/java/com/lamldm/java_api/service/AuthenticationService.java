@@ -55,7 +55,10 @@ public class AuthenticationService {
         User user = userRepository
                 .findByEmail(request.getEmail())
                 .filter(foundUser -> passwordEncoder.matches(request.getPassword(), foundUser.getPassword()))
-                .orElseThrow(() -> new AppException("Unauthorized", HttpStatus.UNAUTHORIZED));
+                .orElseThrow(
+                        () -> new AppException("Username does not exist or password is incorrect.",
+                                HttpStatus.UNAUTHORIZED)
+                );
 
         return generateTokens(user);
     }
@@ -66,7 +69,7 @@ public class AuthenticationService {
 
         User user = userRepository
                 .findByEmail(email)
-                .orElseThrow(() -> new AppException("Unauthorized", HttpStatus.UNAUTHORIZED));
+                .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
 
         return userMapper.toUserResponse(user);
     }

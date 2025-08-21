@@ -29,9 +29,12 @@ public class RoleService {
 
     public RoleResponse createRole(RoleCreateRequest request) {
         Role role = roleMapper.toRoleCreateRequest(request);
-        List<Permission> permissions = permissionRepository.findAllById(request.getPermissions());
 
-        role.setPermissions(new HashSet<>(permissions));
+        if (request.getPermissions() != null) {
+            List<Permission> permissions = permissionRepository.findAllById(request.getPermissions());
+            role.setPermissions(new HashSet<>(permissions));
+        }
+
         Role createRole = roleRepository.save(role);
 
         return roleMapper.toRoleCreateResponse(createRole);
