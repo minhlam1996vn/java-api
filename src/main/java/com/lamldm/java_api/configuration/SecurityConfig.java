@@ -1,5 +1,6 @@
 package com.lamldm.java_api.configuration;
 
+import com.lamldm.java_api.enums.RoleUser;
 import com.lamldm.java_api.repository.InvalidatedTokenRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -72,6 +73,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.PUT, PUBLIC_PUT_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.DELETE, PUBLIC_DELETE_ENDPOINTS).permitAll()
+
+                        .requestMatchers(
+                                "/users",
+                                "/roles"
+                        )
+                        .hasRole(RoleUser.ADMIN.name())
+
                         .anyRequest().authenticated()
         );
 
@@ -83,6 +91,7 @@ public class SecurityConfig {
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())
                         )
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+                        .accessDeniedHandler(new JwtAccessDeniedHandler())
         );
 
         return httpSecurity.build();
@@ -91,7 +100,7 @@ public class SecurityConfig {
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix(""); // ROLE_ || // default: SCOPE_
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
