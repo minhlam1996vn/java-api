@@ -25,7 +25,6 @@ public class UserController {
     UserService userService;
 
     @GetMapping
-//    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     ApiResponse<List<UserListResponse>> index() {
         List<UserListResponse> users = userService.getAllUsers();
 
@@ -35,7 +34,6 @@ public class UserController {
     }
 
     @PostMapping
-//    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     ApiResponse<Void> store(@RequestBody @Valid UserCreateRequest request) {
         userService.createUser(request);
 
